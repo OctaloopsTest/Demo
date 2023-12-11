@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Injectable, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, HttpCode, HttpException, Injectable, UseInterceptors } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateCustomerDto, LoginCustomerDto, SerializedCustomer } from './dto/customer.dto';
 
@@ -20,15 +20,50 @@ export class CustomerService {
   }
 
   async LoginCustomer(input: LoginCustomerDto) {
-    return await this.databaseService.customer.findUnique({
+    const customer = await this.databaseService.customer.findUnique({
       where: {
         email: input.email,
-        password: input.password,
       },
     });
+
+    if (customer) {
+      if (customer.password === input.password) {
+        return customer;
+      }
+    } else return null;
   }
 
   async GetAllCustomers() {
     return await this.databaseService.customer.findMany();
+  }
+
+  async GetCustomerById(id: any) {
+    const customer = await this.databaseService.customer.findUnique({
+      where: {
+        id: id.id,
+      },
+    });
+    if (customer) return customer;
+    else return null;
+  }
+
+  async DeleteCustomerById(id: any) {
+    const customer = await this.databaseService.customer.findUnique({
+      where: {
+        id: id.id,
+      },
+    });
+
+    if (customer) {
+      const deletedCustomer = await this.databaseService.customer.delete({
+        where: {
+          id: id.id,
+        },
+      });
+
+      return deletedCustomer;
+    }
+
+    return null;
   }
 }

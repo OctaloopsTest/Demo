@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, HttpException, HttpStatus, Post, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 
 import { CreateCustomerDto, LoginCustomerDto, SerializedCustomer } from './dto/customer.dto';
@@ -27,8 +27,22 @@ export class CustomerController {
 
   @Get()
   async GetCustomers() {
-    const customers = this.customerService.GetAllCustomers();
+    const customers = await this.customerService.GetAllCustomers();
     if (customers) return customers;
     else throw new HttpException('No Customer Found', HttpStatus.NOT_FOUND);
+  }
+
+  @Get('/:id')
+  async GetCustomeById(@Param() id: string) {
+    const customer = await this.customerService.GetCustomerById(id);
+    if (customer) return customer;
+    else throw new HttpException('Customer Not Found', HttpStatus.NOT_FOUND);
+  }
+
+  @Delete('/:id')
+  async DeleteCustomer(@Param() id: string) {
+    const customer = await this.customerService.DeleteCustomerById(id);
+    if (customer) return customer;
+    else throw new HttpException('Customer Not Found', HttpStatus.NOT_FOUND);
   }
 }
