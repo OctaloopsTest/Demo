@@ -7,6 +7,16 @@ export class CustomerService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async CreateCustomer(input: CreateCustomerDto) {
+    const checkCustomer = await this.databaseService.customer.findUnique({
+      where: {
+        email: input.email,
+      },
+    });
+
+    if (checkCustomer) {
+      return null;
+    }
+
     return await this.databaseService.customer.create({
       data: {
         name: input.name,
