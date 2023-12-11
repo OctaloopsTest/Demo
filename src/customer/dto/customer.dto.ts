@@ -1,11 +1,5 @@
 import { Exclude } from 'class-transformer';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumberString,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
   @IsEmail()
@@ -35,6 +29,16 @@ export class CreateCustomerDto {
   @IsString()
   @IsNotEmpty()
   address: string;
+}
+
+export class LoginCustomerDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }
 
 export class SerializedCustomer {

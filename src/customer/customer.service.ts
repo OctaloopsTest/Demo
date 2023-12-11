@@ -1,17 +1,11 @@
-import {
-  ClassSerializerInterceptor,
-  Injectable,
-  UseInterceptors,
-} from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { ClassSerializerInterceptor, Injectable, UseInterceptors } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { CreateCustomerDto, SerializedCustomer } from './dto/customer.dto';
+import { CreateCustomerDto, LoginCustomerDto, SerializedCustomer } from './dto/customer.dto';
 
 @Injectable()
 export class CustomerService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor)
   async CreateCustomer(input: CreateCustomerDto) {
     return await this.databaseService.customer.create({
       data: {
@@ -21,6 +15,15 @@ export class CustomerService {
         address: input.address,
         contactNumber: input.contactNumber,
         salt: 'salt',
+      },
+    });
+  }
+
+  async LoginCustomer(input: LoginCustomerDto) {
+    return await this.databaseService.customer.findUnique({
+      where: {
+        email: input.email,
+        password: input.password,
       },
     });
   }
