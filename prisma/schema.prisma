@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Supervisor {
+  id            String @id @default(uuid())
+  name          String
+  contactNumber String
+  email         String @unique
+  salt          String
+  password      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers Customer[]
+  drivers   Driver[]
+}
+
+model Customer {
+  id            String @id @default(uuid())
+  name          String
+  address       String
+  contactNumber String
+  email         String @unique
+  salt          String
+  password      String
+  lat           Int?
+  lng           Int?
+  stockCapacity Int?
+  currentStock  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  supervisorId String?
+
+  Supervisor Supervisor? @relation(fields: [supervisorId], references: [id])
+}
+
+model Driver {
+  id            String  @id @default(uuid())
+  name          String
+  contactNumber String
+  email         String  @unique
+  salt          String
+  password      String
+  lat           Int
+  lng           Int
+  isActive      Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  supervisorId String?
+
+  Supervisor Supervisor? @relation(fields: [supervisorId], references: [id])
+}
